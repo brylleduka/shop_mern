@@ -2,10 +2,9 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const path = require("path");
+const config = require("config");
 
 require("dotenv").config();
-
-const items = require("./routes/api/items");
 
 const app = express();
 
@@ -14,7 +13,10 @@ app.use(cors());
 app.use(express.json());
 
 //MONGO URI
-const uri = process.env.ATLAS_URI;
+// const uri = process.env.ATLAS_URI;
+//or
+//DB CONFIG
+const uri = config.get("mongoURI");
 
 //MONGODB Connection
 mongoose
@@ -31,7 +33,9 @@ connection.once("open", () => {
 });
 
 //USE ROUTES
-app.use("/api/items", items);
+app.use("/api/items", require("./routes/api/items"));
+app.use("/api/users", require("./routes/api/users"));
+app.use("/api/auth", require("./routes/api/auth"));
 
 //SERVE static assets if in production
 if (process.env.NODE_ENV === "production") {
